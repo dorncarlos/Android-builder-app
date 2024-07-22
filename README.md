@@ -11,10 +11,14 @@ A web application to connect to an Android TV device and capture screenshots rem
 3. **install dependencies**
    npm install
    npm start
+4. **Run the server**
+   node server.js 
 
 ## connection
 
 1. Enable developer option and allow wireless debug in your device
+2. Make sure your devices are connected to the same WIFI network
+3. Go to WIFI settings on your android device and copy the ipv4 address
 
 ## usage
 
