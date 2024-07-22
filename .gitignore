@@ -1,0 +1,21 @@
+.vscode
+node_modules
+user.txt
+
+D_APPS
+APP_READY
+.dockerignore
+.DS_Store
+BuiltApps
+
+.env
+
+lg.castify.*
+amir-builder/IPK/**
+amir-builder/responds/lg/**
+amir-builder/responds/samsung/**
+amir-builder/TEMP/**
+logs.log
+
+# This for not uploading empty files when doing PR
+!description.txt

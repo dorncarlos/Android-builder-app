@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android TV Screenshots</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #2e2e2e;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        button, a.button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #ff4b4b;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+        }
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+            max-height: 80vh; 
+            border: 2px solid #fff;
+            display: none; 
+            object-fit: contain; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Android TV Screenshots</h1>
+    <label for="ipAddress">Device IP Address</label>
+    <input type="text" id="ipAddress" placeholder="Enter IP Address">
+    <button id="connectButton" onclick="connectDevice()">Connect</button>
+    <button id="captureButton" onclick="captureScreenshot()" style="display: none;">Capture</button>
+    <div id="imageContainer">
+        <img id="screenshot" alt="Screenshot">
+        <div>
+            <a id="backButton" class="button" onclick="goBack()" style="display: none;">Back</a>
+            <a id="downloadButton" class="button" href="#" download="screenshot.png" style="display: none;">Download</a>
+        </div>
+    </div>
+    
+    <script>
+        function connectDevice() {
+            const ipAddress = document.getElementById('ipAddress').value;
+            if (ipAddress) {
+                fetch('/connect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ip: ipAddress })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('captureButton').style.display = 'block';
+                        alert('Device connected successfully.');
+                    } else {
+                        alert('Failed to connect device: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error connecting to device:', error);
+                    alert('Failed to connect device. Please try again.');
+                });
+            } else {
+                alert('Please enter a valid IP address.');
+            }
+        }
+
+        function captureScreenshot() {
+            const ipAddress = document.getElementById('ipAddress').value;
+            if (ipAddress) {
+                fetch('/capture', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ip: ipAddress })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const screenshot = document.getElementById('screenshot');
+                        const backButton = document.getElementById('backButton');
+                        const downloadButton = document.getElementById('downloadButton');
+                        
+                        screenshot.src = data.filePath;
+                        screenshot.style.display = 'block';
+                        
+                        backButton.style.display = 'inline-block'; 
+                        downloadButton.style.display = 'inline-block'; 
+                        downloadButton.setAttribute('href', data.filePath); 
+                    } else {
+                        alert('Failed to capture screenshot: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error capturing screenshot:', error);
+                    alert('Failed to capture screenshot. Please try again.');
+                });
+            } else {
+                alert('Please enter a valid IP address.');
+            }
+        }
+
+        function goBack() {
+            document.getElementById('screenshot').style.display = 'none';
+            document.getElementById('ipAddress').value = ''; 
+            document.getElementById('backButton').style.display = 'none'; 
+            document.getElementById('downloadButton').style.display = 'none'; 
+        }
+    </script>
+</body>
+</html>
